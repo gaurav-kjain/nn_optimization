@@ -302,7 +302,7 @@ def run_all_config(db, maindir, bmult=6,verbose=0):
     
     for config in configName:
         print(configName[config])
-        #run_experiment_config(db=db, bmode=configName[config],maindir=maindir,bmult=bmult,verbose=verbose)
+        run_experiment_config(db=db, bmode=configName[config],maindir=maindir,bmult=bmult,verbose=verbose)
 
 
 
