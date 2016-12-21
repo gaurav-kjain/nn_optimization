@@ -131,6 +131,9 @@ FIVELAYER_H_DIR = 'FiveLayerHier'
 
 MERGE_WEAK_2_DIR = 'MergeWeak2'
 MERGE_WEAK_3_DIR = 'MergeWeak3'
+GSNET2_DIR='gsnet2'
+GSNET3_DIR='gsnet3'
+GSNET5_DIR='gsnet5'
 ####PARAM DICTIONARY
 
 dbName = {
@@ -152,15 +155,18 @@ configName = {
 }
 
 nwDict = {
-    'TWOLAYER'     :  TWOLAYER_DIR,
+    'GSNET_2'       :  GSNET2_DIR,
+    'GSNET_3'       :  GSNET3_DIR,
+    'GSNET_5'       :  GSNET5_DIR,
+    #'TWOLAYER'     :  TWOLAYER_DIR,
     #'TWOLAYER_N'   :  TWOLAYER_N_DIR,
     #'TWOLAYER_H'   :  TWOLAYER_H_DIR,
 
-    'THREELAYER'   :  THREELAYER_DIR,
+    #'THREELAYER'   :  THREELAYER_DIR,
     #'THREELAYER_N' :  THREELAYER_N_DIR,
     #'THREELAYER_H' :  THREELAYER_H_DIR,
 
-    'FIVELAYER'    :  FIVELAYER_DIR,
+    #'FIVELAYER'    :  FIVELAYER_DIR,
     #'FIVELAYER_N'  :  FIVELAYER_N_DIR,
     #'FIVELAYER_H'  :  FIVELAYER_H_DIR,
     #'MERGE_WEAK_2' :  MERGE_WEAK_2_DIR,
@@ -168,6 +174,9 @@ nwDict = {
 }
 
 nwFunc = {
+    'GSNET_2'       :  gsnet_cnn_2,
+    'GSNET_3'       :  gsnet_cnn_3,
+    'GSNET_5'       :  gsnet_cnn_5,
     'TWOLAYER': two_layer_Model,
     'TWOLAYER_N': two_layer_Model_Noisy,
     'TWOLAYER_H': two_layer_Model_hier,

@@ -11,6 +11,43 @@ import time
 nb_filters = 64
 nb_pool = 2
 
+def gsnet_cnn_2(loss='categorical_crossentropy',optimizer='adadelta',img_rows=28, img_cols = 28, depth=1,classes=10,init='adam'):
+    model=gsnet_cnn(loss,optimizer,img_rows, img_cols, depth,classes,init,n_features=2,n_layers=2)
+    return model
+
+def gsnet_cnn_3(loss='categorical_crossentropy',optimizer='adadelta',img_rows=28, img_cols = 28, depth=1,classes=10,init='adam'):
+    model=gsnet_cnn(loss,optimizer,img_rows, img_cols, depth,classes,init,n_features=2,n_layers=3)
+    return model
+
+def gsnet_cnn_5(loss='categorical_crossentropy',optimizer='adadelta',img_rows=28, img_cols = 28, depth=1,classes=10,init='adam'):
+    model=gsnet_cnn(loss,optimizer,img_rows, img_cols, depth,classes,init,n_features=2,n_layers=5)
+    return model
+
+def gsnet_cnn(loss='categorical_crossentropy',optimizer='adadelta',img_rows=28, img_cols = 28, depth=1,classes=10,init='adam',n_features=2,n_layers=2):
+    
+    model = Sequential()
+    
+    no_filters=classes*n_layers*n_features
+    init_do=0.25
+    dense_lay=2*classes
+    
+    for lay in range(0,n_layers,1):
+        model.add(Convolution2D(no_filters, 3, 3,border_mode='valid',input_shape=(depth, img_rows, img_cols)))
+        model.add(Activation('relu'))
+        model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
+        model.add(Dropout(init_do))        
+        init_do=init_do+0.1
+        no_filters=no_filters/2
+        
+    model.add(Flatten())
+    model.add(Dense(dense_lay))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(classes))
+    model.add(Activation('softmax'))
+    model.compile(loss=loss,optimizer=optimizer,metrics=['accuracy'])
+    return model
+
 def merge_wide3_layer_Models(loss='categorical_crossentropy', optimizer='adadelta', img_rows=28, img_cols=28, depth=1,
                              classes=10, init='adam'):
     left = Sequential()
