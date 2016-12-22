@@ -181,6 +181,6 @@ class DirGlobals(object):
         print(self.CIFAR20_DIR)
         print(self.CALTECH_101_DIR)
         print(self.FLOWERS_102_DIR)
-        print(self.STL_10__DIR)
+        print(self.STL_10_DIR)
 
 #dnn_globals.py

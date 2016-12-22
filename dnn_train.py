@@ -5,6 +5,7 @@ from keras.datasets import cifar10
 from keras.datasets import cifar100
 from keras.datasets import mnist
 from keras.callbacks import History, EarlyStopping
+from keras.utils import np_utils
 import time
 #import stl10
 #import caltech101
@@ -28,17 +29,15 @@ def process_postepoch(model, x_tr, y_tr, hist11, verbose ,clamp=False, iqr=False
     #loss_arr=loss_arr[nanidx]
     #x_tr=x_tr[nanidx]
     #y_tr=y_tr[nanidx]
-	
     #remove all train samples which attain high accuracy, VANISHING GRADIENT responsible, ALSO may be responsible for overfitting
     #clamp these values
     if clamp is True:
-        minclampval=1e-6				
+        minclampval=1e-3				
         nanidx=np.where(loss_arr>minclampval)
         print("TOTAL CLAMPED SIZE IS="+str(nanidx[0].size))
         loss_arr=loss_arr[nanidx]
         x_tr=x_tr[nanidx]
         y_tr=y_tr[nanidx]
-	
     #Get the IQR, it should be proper
     lt=np.percentile(loss_arr,25)
     ht=np.percentile(loss_arr,75)
@@ -46,24 +45,22 @@ def process_postepoch(model, x_tr, y_tr, hist11, verbose ,clamp=False, iqr=False
     hist11=hist11+list(['l_iqr',lt])
     hist11=hist11+list(['h_iqr',ht])
     hist11=hist11+list(['iqr',t])
-	
     if verbose is not 0:
         print("IQR value 25% is="+str(lt))
         print("IQR value 75% is="+str(ht))
-	print("IQR value is="+str(t))	
+    print("IQR value is="+str(t))	
 
     lt=lt-t/2
     ht=ht+t/2
     hist11=hist11+list(['l_thr',lt])
     hist11=hist11+list(['h_thr',ht])
-	
     if verbose is not 0:
         print("Min threshold is="+str(lt))
-	print("Max Threshold is="+str(ht))
-	
+    print("Max Threshold is="+str(ht))
 
-    if(lt<1e-3):#0.9 probability
-        lt=1e-3
+    ltt=1e-2
+    if(lt<ltt):#0.9 probability
+        lt=ltt
     elif(lt>0.3):#0.5 probability
         lt=0.3
 
@@ -71,27 +68,25 @@ def process_postepoch(model, x_tr, y_tr, hist11, verbose ,clamp=False, iqr=False
         ht=1
     elif(ht<0.3):#0.5 probability
         ht=0.3
-		
+
     if(np.isnan(lt)):
-	lt=1e-3
+        lt=1e-3
     if(np.isnan(ht)):
-	ht=0.3
+        ht=0.3
     loss_idx=np.where(loss_arr>lt)
     if verbose is not 0:
-        print('train size changes to ='+str(loss_idx[0].size))	
-	
+        print('train size changes to ='+str(loss_idx[0].size))
     lt=min(loss_arr)
     ht=max(loss_arr)
     hist11=hist11+list(['min',lt])
     hist11=hist11+list(['max',ht])
-	
+
     if verbose is not 0:
         print("Minimum loss is="+str(lt))
-        print("Maximum loss is="+str(ht))	
-	
+        print("Maximum loss is="+str(ht))
     return x_tr,y_tr,hist11,loss_idx
 
-	
+
 def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_epoch=100, verbose=0, c=10, bmode='normal'):
     totepoch=20
     l_th=1e-02
@@ -102,11 +97,17 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
     if bmode is 'normal':
         print('running without generator')
         model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,verbose=verbose, callbacks=[history,stopearly],validation_data=(X_test, Y_test) )
+
+        history=history.history.items()
+
     elif bmode is 'careful':
         print('running careful generator')
         newgen = generator_of_new(X_train, y_f, c, batch_size)
         model.fit_generator(newgen, nb_epoch=nb_epoch, verbose=verbose, callbacks=[history, stopearly],
                             validation_data=(X_test, Y_test), samples_per_epoch=X_train.shape[0])
+
+        history=history.history.items()
+    
     elif bmode is 'careful_init':
         print('running careful init generator')
         newgen = generator_of_new(X_train, y_f, c, batch_size)
@@ -115,7 +116,7 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
                             validation_data=(X_test, Y_test), samples_per_epoch=X_train.shape[0])
         hist1=history.history
         model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch,verbose=verbose, callbacks=[history,stopearly],validation_data=(X_test, Y_test) )
-		
+
         history=hist1.items()+history.history.items()
         print('Done with careful init run')
     
@@ -124,11 +125,14 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
         newgen = generator_of_new(X_train, y_f, c, batch_size)
         model.fit_generator(newgen, nb_epoch=nb_epoch, verbose=verbose, callbacks=[history, stopearly],
                             validation_data=(X_test, Y_test), samples_per_epoch=X_train.shape[0])
+
+        history=history.history.items()
     elif bmode is 'carefulup':
         print('running up careful generator')
         newgen = generator_of_new(X_train, y_f, c, batch_size)
         model.fit_generator(newgen, nb_epoch=nb_epoch, verbose=verbose, callbacks=[history, stopearly],
                             validation_data=(X_test, Y_test), samples_per_epoch=X_train.shape[0])
+        history=history.history.items()
     
     elif bmode is 'outliers':
         print('running outliers generator')
@@ -161,12 +165,12 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
         stopearly1 = EarlyStopping(monitor='val_acc', patience=1, verbose=1, mode='auto')
         totepoch=100
         
-	for epp in range(1,totepoch,1):
+    for epp in range(1,totepoch,1):
             print("Epoch="+str(epp)+"/"+str(totepoch))
             hist1=model.fit(x_in, y_in, batch_size=batch_size, nb_epoch=1,verbose=verbose, callbacks=[stopearly1],validation_data=(X_test, Y_test) )
             hist11=hist11+hist1.history.items()+list(['tr_size',x_in.shape[0]])            
-	    x_in,y_in,hist11,loss_idx=process_postepoch(model, X_train,Y_train,hist11,verbose=verbose,clamp=False)			
-	    if loss_idx[0].size is 0:
+		x_in,y_in,hist11,loss_idx=process_postepoch(model, X_train,Y_train,hist11,verbose=verbose,clamp=False)			
+            if loss_idx[0].size is 0:
                 x_in=X_train
                 y_in=Y_train
                 continue            
@@ -188,7 +192,7 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
 	    totepoch=100
 	    for epp in range(1,totepoch,1):
 	        print("Epoch="+str(epp)+"/"+str(totepoch))
-		hist1=model.fit(x_in, y_in, batch_size=batch_size, nb_epoch=1,verbose=verbose, callbacks=[stopearly1],validation_data=(X_test, Y_test) )
+		hist1=model.fit(x_in, y_in, batch_size=batch_size, nb_epoch=10,verbose=verbose, callbacks=[stopearly1],validation_data=(X_test, Y_test) )
 		hist11=hist11+hist1.history.items()+list(['tr_size',x_in.shape[0]])				
 		x_clamp,y_clamp,hist11,loss_idx=process_postepoch(model, x_clamp,y_clamp,hist11,verbose=verbose,clamp=True)				
 		if loss_idx[0].size is 0:
@@ -278,7 +282,7 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
     
     score = 0
     print(history)
-    return history, score
+    return history, model
 
 
 def fitModelMerge(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_epoch=100, verbose=0, c=10, bmode='normal'):
@@ -324,9 +328,9 @@ def runAnalysisOptimizers(netwk, x_t, y_t, x_v, y_v, y_f, b_size, epoc, v=1, los
                           optimizer='adadelta', img_h=28, img_w=28, d=1, c=10, init='uniform',bmode='normal'):
     model = netwk(loss=loss, optimizer=optimizer, img_rows=img_h, img_cols=img_w, depth=d, classes=c, init=init)
 
-    hist, score = fitModel_(model, x_t, y_t, x_v, y_v, y_f, batch_size=b_size, nb_epoch=epoc, verbose=v, c=c,bmode=bmode)
+    hist, model = fitModel_(model, x_t, y_t, x_v, y_v, y_f, batch_size=b_size, nb_epoch=epoc, verbose=v, c=c,bmode=bmode)
 
-    return hist, score
+    return hist, model
 
 
 def runAnalysisOptimizersMerge(netwk, x_t, y_t, x_v, y_v, y_f, b_size, epoc, v=1, loss='categorical_crossentropy',

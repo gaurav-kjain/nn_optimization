@@ -1,4 +1,4 @@
-
+#gsnet.py
 from keras.models import Sequential
 from keras.layers import GaussianNoise
 from keras.layers import Convolution2D, MaxPooling2D
@@ -7,7 +7,7 @@ from keras.callbacks import History, EarlyStopping
 from keras.layers import Flatten, Dense, Dropout, Activation, Merge
 from keras.optimizers import SGD
 import time
-
+print('GSNET TODAY')
 nb_filters = 64
 nb_pool = 2
 
@@ -27,17 +27,22 @@ def gsnet_cnn(loss='categorical_crossentropy',optimizer='adadelta',img_rows=28, 
     
     model = Sequential()
     
-    no_filters=classes*n_layers*n_features
+    no_filters=classes*n_layers
     init_do=0.25
-    dense_lay=2*classes
+    #dense_lay=classes*(2**(n_layers-1))
+    dense_lay=classes*(n_layers-1)
     
     for lay in range(0,n_layers,1):
-        model.add(Convolution2D(no_filters, 3, 3,border_mode='valid',input_shape=(depth, img_rows, img_cols)))
+        model.add(Convolution2D(no_filters, 3, 3,border_mode='same',input_shape=(depth, img_rows, img_cols)))
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
+        #model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
         model.add(Dropout(init_do))        
         init_do=init_do+0.1
         no_filters=no_filters/2
+        if (init_do>0.6):
+            init_do=0.6
+        if(no_filters<classes):
+            no_filters=classes
         
     model.add(Flatten())
     model.add(Dense(dense_lay))
@@ -408,3 +413,5 @@ def five_layer_Model_Hier(loss='categorical_crossentropy', optimizer='adadelta',
     model.add(Activation('softmax'))
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
     return model
+#gsnet.py
+
