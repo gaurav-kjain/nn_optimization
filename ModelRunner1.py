@@ -1,4 +1,5 @@
 #ModelRunner1.py
+print("version="+'22_2016_10.54_pm')
 from dnn_train import *
 from gsnet import *
 import sys
@@ -6,6 +7,7 @@ from dnn_globals import DirGlobals
 from IPython.display import clear_output
 import os
 import stl10
+
 
 try:
        import cPickle as pickle
@@ -198,10 +200,10 @@ sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
 optimizerDict = {
     #'ADL': 'adadelta',
-    #'ADG': 'adagrad',
+    'ADG': 'adagrad',
     #'SGD':  sgd,
     #'ADM': 'adam',
-    'ADMX': 'adamax',
+    #'ADMX': 'adamax',
     #'NDM' :'nadam',
 }
 
