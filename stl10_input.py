@@ -83,13 +83,13 @@ def read_single_image(image_file):
     return image
 
 
-def plot_image(image):
+#def plot_image(image):
     """
     :param image: the image to be plotted in a 3-D matrix format
     :return: None
     """
-    plt.imshow(image)
-    plt.show()
+    #plt.imshow(image)
+    #plt.show()
 
 
 def download_and_extract():

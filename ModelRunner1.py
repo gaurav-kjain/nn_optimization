@@ -3,9 +3,9 @@ from dnn_train import *
 from gsnet import *
 import sys
 from dnn_globals import DirGlobals
-from IPython.display import clear_output
+#from IPython.display import clear_output
 import os
-import stl10
+#import stl10
 
 try:
        import cPickle as pickle
