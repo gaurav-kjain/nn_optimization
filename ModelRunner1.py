@@ -1,10 +1,12 @@
 #ModelRunner1.py
+print("version="+'22_2016_10.54_pm')
 import sys
 from dnn_globals import DirGlobals
 #from IPython.display import clear_output
 import os
 #import stl10
 from ModelConfig import *
+
 
 try:
        import cPickle as pickle
