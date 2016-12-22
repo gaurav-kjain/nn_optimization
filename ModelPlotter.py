@@ -1,24 +1,24 @@
-#ModelRunner1.py
+#ModelPlotter.py
 import sys
 from dnn_globals import DirGlobals
 #from IPython.display import clear_output
 import os
-#import stl10
 from ModelConfig import *
 
 try:
-       import cPickle as pickle
+    import cPickle as pickle
 except:
-       import pickle
+    import pickle
 
 sys.setrecursionlimit(600000)
 print("SETTING RECURSION LIMIT")
 epoc__ = 1000
 ext__='.pkk'
 mext__='.mdd'
+cext__='.csv'
 gloss='categorical_crossentropy'
 
-def run_experiment_config(db, bmode,maindir,bmult=6,verbose=0):    
+def save_csv_config(db, bmode,maindir,bmult=6,verbose=0):    
     #set the directories now
     drg=DirGlobals()
     drg.setmaindir(path=maindir)
@@ -87,31 +87,21 @@ def run_experiment_config(db, bmode,maindir,bmult=6,verbose=0):
                     b=bs*c
                     if opti is 'SGD':
                         finstr=makefinresults_filename_init(b=b,e=0,opti='SGD',init=inti, ext=ext__)
-                        mfinstr=makefinresults_filename_init(b=b,e=0,opti='SGD',init=inti, ext=mext__)
+                        mfinstr=makefinresults_filename_init(b=b,e=0,opti='SGD',init=inti, ext=cext__)
                     else:
                         finstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=ext__)
-                        mfinstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=mext__)
+                        mfinstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=cext__)
                     dp=getdirectorypath(MAIN_DIR,dbDict[db],nwDict[nw])
                     finfilename=getfinresname(dp,finstr)
                     mfinfilename=getfinresname(dp,mfinstr)
-                    if os.path.isfile(finfilename) is False:
+                    #if os.path.isfile(finfilename) is True and os.path.isfile(mfinfilename) is False:
+                    if os.path.isfile(finfilename) is True:
                         print(finfilename)
-                        print(h,w,d,c,b)
+                        print(mfinfilename)
+                        makecsv_global_write(finfilename,mfinfilename,bmode)
                         sys.stdout.flush()
-                        if nw is 'MERGE_WEAK_2':
-                            hist,score=runAnalysisOptimizersMerge(nwFunc[nw],x_t,y_t,x_v,y_v,y_f,b_size=b,epoc=epoc__,v=verbose,loss=gloss,
-                                  optimizer=optimizerDict[opti],img_h=h, img_w=w, d=d,c=c,init=inti, bmode=bmode)
-                            save_results(hist, finfilename)
-                        else:
-                            hist,model=runAnalysisOptimizers(nwFunc[nw],x_t,y_t,x_v,y_v,y_f,b_size=b,epoc=epoc__,v=verbose,loss=gloss,
-                                  optimizer=optimizerDict[opti],img_h=h, img_w=w, d=d,c=c,init=inti,bmode=bmode)
-                            #if bmode is 'careful_init' or 'outliers' or 'care_outliers' or 'outliers_randthr' or 'outliers_iqr' or 'care_outliers_iqr' or 'care_outliers_iqr' :
-                            save_results_via_pickle(hist, finfilename)
-                            save_results_via_pickle(model, mfinfilename)
-                            #else:
-                             #   save_results(hist, finfilename)
-                    clear_output()
-                    #os.system("clear")
+                    #clear_output()
+                    os.system("clear")
 
 
 def run_all_config(db, maindir, bmult=6,verbose=0):
