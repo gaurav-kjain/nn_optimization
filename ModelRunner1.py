@@ -102,7 +102,7 @@ def loadData(datastring='mnist', cnnin=True):
         return img_h,img_w,d,nb_classes,x_t,y_t,x_v,y_v,y_f
 
     elif datastring is 'stl_10':
-        X_train, Y_train, X_test, Y_test,Y_flat = stl10.load_data()
+        #X_train, Y_train, X_test, Y_test,Y_flat = stl10.load_data()
         img_h, img_w, d, nb_classes = 96, 96, 3, 10
         return img_h, img_w, d, nb_classes, X_train, Y_train, X_test, Y_test, Y_flat
 

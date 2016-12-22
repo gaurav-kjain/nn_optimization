@@ -48,7 +48,7 @@ def process_postepoch(model, x_tr, y_tr, hist11, verbose ,clamp=False, iqr=False
     if verbose is not 0:
         print("IQR value 25% is="+str(lt))
         print("IQR value 75% is="+str(ht))
-    print("IQR value is="+str(t))	
+        print("IQR value is="+str(t))	
 
     lt=lt-t/2
     ht=ht+t/2
@@ -165,11 +165,11 @@ def fitModel_(model, X_train, Y_train, X_test, Y_test, y_f, batch_size=100, nb_e
         stopearly1 = EarlyStopping(monitor='val_acc', patience=1, verbose=1, mode='auto')
         totepoch=100
         
-    for epp in range(1,totepoch,1):
+        for epp in range(1,totepoch,1):
             print("Epoch="+str(epp)+"/"+str(totepoch))
             hist1=model.fit(x_in, y_in, batch_size=batch_size, nb_epoch=1,verbose=verbose, callbacks=[stopearly1],validation_data=(X_test, Y_test) )
             hist11=hist11+hist1.history.items()+list(['tr_size',x_in.shape[0]])            
-		x_in,y_in,hist11,loss_idx=process_postepoch(model, X_train,Y_train,hist11,verbose=verbose,clamp=False)			
+	    x_in,y_in,hist11,loss_idx=process_postepoch(model, X_train,Y_train,hist11,verbose=verbose,clamp=False)			
             if loss_idx[0].size is 0:
                 x_in=X_train
                 y_in=Y_train
