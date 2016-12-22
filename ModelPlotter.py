@@ -18,7 +18,7 @@ mext__='.mdd'
 cext__='.csv'
 gloss='categorical_crossentropy'
 
-def save_csv_config(db, bmode,maindir,bmult=6,verbose=0):    
+def save_csv_config(db, bmode,maindir,bmult=6,c=10,verbose=0):    
     #set the directories now
     drg=DirGlobals()
     drg.setmaindir(path=maindir)
@@ -71,11 +71,6 @@ def save_csv_config(db, bmode,maindir,bmult=6,verbose=0):
         return
     
     dbDict=drg.dbDict
-    
-    
-    print(dbName[db])
-    data=loadData(dbName[db])
-    h,w,d,c,x_t,y_t,x_v,y_v,y_f=data#loadData(dbName[db])
     sys.stdout.flush()
     
     for opti in optimizerDict:
@@ -104,11 +99,19 @@ def save_csv_config(db, bmode,maindir,bmult=6,verbose=0):
                     os.system("clear")
 
 
-def run_all_config(db, maindir, bmult=6,verbose=0):
-    
-    for config in configName:
-        print(configName[config])
-        run_experiment_config(db=db, bmode=configName[config],maindir=maindir,bmult=bmult,verbose=verbose)
+def save_all_config(maindir, bmult=6,verbose=0):
+    drg=DirGlobals()
+    drg.setmaindir(path=maindir)
+    for db in drg.dbDict:
+	print(db)
+        c=10
+        if db is 'CIFAR100':
+		   c=100
+        elif db is 'CIFAR20':
+		    c=20
+	for config in configName:
+	    print(configName[config])
+            save_csv_config(db=db, bmode=configName[config],maindir=maindir,bmult=bmult,c=c,verbose=verbose)
 
 
 
