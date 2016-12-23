@@ -88,15 +88,16 @@ def save_csv_config(db, bmode,maindir,bmult=6,c=10,verbose=0):
                         mfinstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=cext__)
                     dp=getdirectorypath(MAIN_DIR,dbDict[db],nwDict[nw])
                     finfilename=getfinresname(dp,finstr)
-                    mfinfilename=getfinresname(dp,mfinstr)
+                    mfinfilename=getfinresname(MAIN_DIR,dbDict[db]+'_'+nwDict[nw]+'_'+mfinstr)
+                    print(mfinfilename)
                     #if os.path.isfile(finfilename) is True and os.path.isfile(mfinfilename) is False:
                     if os.path.isfile(finfilename) is True:
                         print(finfilename)
                         print(mfinfilename)
-                        makecsv_global_write(finfilename,mfinfilename,bmode)
-                        sys.stdout.flush()
+                        #makecsv_global_write(finfilename,mfinfilename,bmode)
+                        #sys.stdout.flush()
                     #clear_output()
-                    os.system("clear")
+                    #os.system("clear")
 
 
 def save_all_config(maindir, bmult=6,verbose=0):

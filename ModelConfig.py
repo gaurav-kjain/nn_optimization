@@ -151,6 +151,16 @@ dbName = {
     'STL10'     : 'stl_10'
 }
 
+dbcsvName = {
+    'MNIST'     : 'mnist',
+    'CIFAR10'   : 'cif10',
+    'CIFAR100'  : 'cif100',
+    'CIFAR20'   : 'cif20',
+    'FLOWERS102': 'fl102',
+    'CALTECH101': 'cal101',
+    'STL10'     : 'stl10'
+}
+
 configName = {
     'normal'            : 'normal',
     'careful'           : 'careful',
@@ -172,6 +182,25 @@ nwDict = {
     #'THREELAYER_H' :  THREELAYER_H_DIR,
 
     'FIVELAYER'    :  FIVELAYER_DIR,
+    #'FIVELAYER_N'  :  FIVELAYER_N_DIR,
+    #'FIVELAYER_H'  :  FIVELAYER_H_DIR,
+    #'MERGE_WEAK_2' :  MERGE_WEAK_2_DIR,
+    #'MERGE_WEAK_3' :  MERGE_WEAK_3_DIR
+}
+
+nwcsvName = {
+    #'GSNET_2'       :  '',
+    #'GSNET_3'       :  GSNET3_DIR,
+    #'GSNET_5'       :  GSNET5_DIR,
+    'TWOLAYER'       :  'twl',
+    #'TWOLAYER_N'   :  TWOLAYER_N_DIR,
+    #'TWOLAYER_H'   :  TWOLAYER_H_DIR,
+
+    'THREELAYER'     : 'thl',
+    #'THREELAYER_N' :  THREELAYER_N_DIR,
+    #'THREELAYER_H' :  THREELAYER_H_DIR,
+
+    'FIVELAYER'      : 'fvl',
     #'FIVELAYER_N'  :  FIVELAYER_N_DIR,
     #'FIVELAYER_H'  :  FIVELAYER_H_DIR,
     #'MERGE_WEAK_2' :  MERGE_WEAK_2_DIR,
