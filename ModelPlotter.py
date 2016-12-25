@@ -82,19 +82,23 @@ def save_csv_config(db, bmode,maindir,bmult=6,c=10,verbose=0):
                     b=bs*c
                     if opti is 'SGD':
                         finstr=makefinresults_filename_init(b=b,e=0,opti='SGD',init=inti, ext=ext__)
-                        mfinstr=makefinresults_filename_init(b=b,e=0,opti='SGD',init=inti, ext=cext__)
+                        mfinstr=makefinresults_filename_init(b=b,e=0,opti='SGD',inita=inti, ext=cext__)
+                        mdescstr=makefinresults_filename_init(b=b,e=0,opti='SGD',inita=inti, ext=cext__)
                     else:
                         finstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=ext__)
                         mfinstr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=cext__)
+                        mdesctr=makefinresults_filename_init(b=b,e=0,opti=optimizerDict[opti],init=inti, ext=cext__)
                     dp=getdirectorypath(MAIN_DIR,dbDict[db],nwDict[nw])
                     finfilename=getfinresname(dp,finstr)
                     mfinfilename=getfinresname(MAIN_DIR,dbDict[db]+'_'+nwDict[nw]+'_'+mfinstr)
+                    mdescfilename=getfinresname(MAIN_DIR,dbDict[db]+'_'+nwDict[nw]+'_describe'+mfinstr)
                     print(mfinfilename)
+                    print(mdescfilename)
                     #if os.path.isfile(finfilename) is True and os.path.isfile(mfinfilename) is False:
                     if os.path.isfile(finfilename) is True:
                         print(finfilename)
                         print(mfinfilename)
-                        #makecsv_global_write(finfilename,mfinfilename,bmode)
+                        makecsv_global_write(finfilename,mfinfilename,mdescfilename,bmode)
                         #sys.stdout.flush()
                     #clear_output()
                     #os.system("clear")
