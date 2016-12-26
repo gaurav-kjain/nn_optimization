@@ -173,7 +173,7 @@ nwDict = {
     'GSNET_2'       :  GSNET2_DIR,
     #'GSNET_3'       :  GSNET3_DIR,
     #'GSNET_5'       :  GSNET5_DIR,
-    #'TWOLAYER'     :  TWOLAYER_DIR,
+    'TWOLAYER'     :  TWOLAYER_DIR,
     #'TWOLAYER_N'   :  TWOLAYER_N_DIR,
     #'TWOLAYER_H'   :  TWOLAYER_H_DIR,
 
@@ -278,12 +278,12 @@ def makecsv_carenormal(picklefile):
 def makecsv_outliers(picklefile):
     data=readpickle(picklefile)
     df=pd.DataFrame()
-    df1=pd.DataFrame()
     offset=20
     tot=len(data)/offset
     peroff=4
     
     for outidx in range(0,tot,1):
+        df1=pd.DataFrame()
         for idx in range(0,peroff,1):
             df1[data[outidx*offset+idx][0]]=data[outidx*offset+idx][1]
         for idx in range(peroff,offset,2):
@@ -292,8 +292,25 @@ def makecsv_outliers(picklefile):
     df=df.reset_index()
     return df
 
+def makecsv_outliers_npass(picklefile):
+    data=readpickle(picklefile)
+    df=pd.DataFrame()
+    df1=pd.DataFrame()
+    offset=20
+    tot=len(data)/offset
+    peroff=4
+    
+    for outidx in range(0,tot,1):
+        df_=pd.DataFrame()
+        for idx in range(0,peroff,1):
+            df_[data[outidx*offset+idx][0]]=data[outidx*offset+idx][1]
+        for idx in range(peroff,offset,2):
+            df_[data[outidx*offset+idx]]=data[outidx*offset+idx+1]
+        df=pd.concat([df,df1])
+    df=df.reset_index()
+    return df
 
-def makecsv_global_write(picklefile,towritefile, bmode):
+def makecsv_global_write(picklefile,towritefile, descfile, bmode):
 
     towritedata=[]
     if bmode is 'normal':
@@ -304,8 +321,12 @@ def makecsv_global_write(picklefile,towritefile, bmode):
         towritedata=makecsv_careful_init(picklefile)
     elif bmode is 'outliers_iqr':
         towritedata=makecsv_outliers(picklefile)
+    elif bmode is 'outliers_iqr_npass':
+        towritedata=makecsv_outliers(picklefile)
 
     towritedata.to_csv(towritefile)
+    desdata=towritedata.describe()
+    desdata.to_csv(descfile)
 
 
 
