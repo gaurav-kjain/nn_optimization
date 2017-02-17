@@ -164,26 +164,26 @@ dbcsvName = {
 configName = {
     'normal'            : 'normal',
     'careful'           : 'careful',
-    'careful_init'      : 'careful_init',
-    'outliers_iqr_npass': 'outliers_iqr_npass',
-    'outliers_iqr'      : 'outliers_iqr'
+    #'careful_init'      : 'careful_init',
+    #'outliers_iqr_npass': 'outliers_iqr_npass',
+    #'outliers_iqr'      : 'outliers_iqr'
 }
 
 nwDict = {
-    'GSNET_2'       :  GSNET2_DIR,
+    #'GSNET_2'       :  GSNET2_DIR,
     #'GSNET_3'       :  GSNET3_DIR,
     #'GSNET_5'       :  GSNET5_DIR,
     'TWOLAYER'     :  TWOLAYER_DIR,
     #'TWOLAYER_N'   :  TWOLAYER_N_DIR,
-    #'TWOLAYER_H'   :  TWOLAYER_H_DIR,
+    'TWOLAYER_H'   :  TWOLAYER_H_DIR,
 
     'THREELAYER'   :  THREELAYER_DIR,
     #'THREELAYER_N' :  THREELAYER_N_DIR,
-    #'THREELAYER_H' :  THREELAYER_H_DIR,
+    'THREELAYER_H' :  THREELAYER_H_DIR,
 
     'FIVELAYER'    :  FIVELAYER_DIR,
     #'FIVELAYER_N'  :  FIVELAYER_N_DIR,
-    #'FIVELAYER_H'  :  FIVELAYER_H_DIR,
+    'FIVELAYER_H'  :  FIVELAYER_H_DIR,
     #'MERGE_WEAK_2' :  MERGE_WEAK_2_DIR,
     #'MERGE_WEAK_3' :  MERGE_WEAK_3_DIR
 }
@@ -226,19 +226,19 @@ nwFunc = {
 sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 
 optimizerDict = {
-    #'ADL': 'adadelta',
-    #'ADG': 'adagrad',
-    #'SGD':  sgd,
-    #'ADM': 'adam',
+    'ADL': 'adadelta',
+    'ADG': 'adagrad',
+    'SGD':  sgd,
+    'ADM': 'adam',
     'ADMX': 'adamax',
-    #'NDM' :'nadam',
+    'NDM' :'nadam',
 }
 
 initDict = {
-    #'unif': 'uniform',
-    #'norm': 'normal',
-    #'zero': 'zero',
-    #'gl_n': 'glorot_normal',
+    'unif': 'uniform',
+    'norm': 'normal',
+    'zero': 'zero',
+    'gl_n': 'glorot_normal',
     'gl_u': 'glorot_uniform',
     'he_u': 'he_uniform',
 }
@@ -327,9 +327,33 @@ def makecsv_global_write(picklefile,towritefile, descfile, bmode):
     towritedata.to_csv(towritefile)
     desdata=towritedata.describe()
     desdata.to_csv(descfile)
+    return desdata
 
 
 
 
+def makecsv_global_write_npz(npzfile,towritefile, descfile, bmode):
+
+    npdata=np.load(npzfile)
+    towritedata=pd.DataFrame()
+    towritedata['acc']=npdata['acc']
+    towritedata['val_acc']=npdata['val_acc']
+    towritedata['loss']=npdata['loss']
+    towritedata['val_loss']=npdata['val_loss']
+    print(towritedata)
+    towritedata.to_csv(towritefile)
+    desdata=towritedata.describe()
+    desdata.to_csv(descfile)
+    return desdata
 
 
+def makedf_global_from_npz(npzfile):
+
+    npdata=np.load(npzfile)
+    towritedata=pd.DataFrame()
+    towritedata['acc']=npdata['acc']
+    towritedata['val_acc']=npdata['val_acc']
+    towritedata['loss']=npdata['loss']
+    towritedata['val_loss']=npdata['val_loss']
+    print(towritedata)
+    return towritedata
